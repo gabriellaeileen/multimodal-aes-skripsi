@@ -41,57 +41,69 @@ Lingkungan referensi yang dipakai pada saat penelitian:
 
 ## Setup Environment
 
-Tersedia dua jalur instalasi. Pilih salah satu sesuai preferensi.
+Disediakan dua jalur instalasi. Pilih salah satu sesuai preferensi.
 
 ### Opsi A — Conda (direkomendasikan, sesuai naskah)
 
 Cocok untuk replikasi 1:1 dengan lingkungan penelitian, terutama jika
-memakai GPU Intel Arc (XPU backend).
+memakai GPU Intel Arc (XPU backend). Driver Intel Arc terbaru sebaiknya
+sudah ter-install.
 
-```bash
-# 1. Buat environment baru
+```powershell
+# 1. Buat environment dari spec
 conda env create -f environment.yml
 
 # 2. Aktifkan
 conda activate skripsi-aes
 
-# 3. Daftarkan kernel Jupyter (agar dapat dipilih di notebook)
+# 3. (Opsional) daftarkan kernel Jupyter agar muncul di notebook
 python -m ipykernel install --user --name skripsi-aes --display-name "Python (skripsi-aes)"
 
 # 4. Jalankan Jupyter
 jupyter notebook
 ```
 
-### Opsi B — pip (alternatif, tanpa Conda)
+`environment.yml` sudah menambahkan `--extra-index-url` ke PyTorch XPU,
+sehingga `torch==2.10.0+xpu` beserta seluruh runtime Intel oneAPI
+(`dpcpp-cpp-rt`, `intel-cmplr-*`, `onemkl-sycl-*`, `intel-openmp`, `mkl`,
+`tbb`, `triton-xpu`, dst.) akan terinstal otomatis sebagai dependensi.
 
-Cocok jika tidak memakai Conda atau memakai GPU non-Intel (NVIDIA/CPU).
-Lihat catatan PyTorch di `requirements.txt` untuk penyesuaian backend.
+### Opsi B — pip + venv (alternatif, tanpa Conda)
 
-```bash
+Cocok jika tidak memakai Conda atau memakai backend non-XPU.
+
+```powershell
 # 1. Buat virtual environment
 python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# Linux / macOS
-source .venv/bin/activate
+.venv\Scripts\activate           # Windows
+# source .venv/bin/activate      # Linux / macOS
 
-# 2. Install dependensi
+# 2. Install PyTorch sesuai backend Anda (pilih SALAH SATU)
+#   - Intel XPU (sesuai naskah):
+pip install --extra-index-url https://download.pytorch.org/whl/xpu torch==2.10.0
+#   - NVIDIA CUDA 12.x:
+# pip install --extra-index-url https://download.pytorch.org/whl/cu121 torch==2.10.0
+#   - CPU only:
+# pip install torch==2.10.0
+
+# 3. Install dependency selain PyTorch
 pip install -r requirements.txt
 
-# 3. Daftarkan kernel & jalankan Jupyter
+# 4. (Opsional) daftarkan kernel & jalankan Jupyter
 python -m ipykernel install --user --name skripsi-aes --display-name "Python (skripsi-aes)"
 jupyter notebook
 ```
 
-### Catatan Backend PyTorch
+### Verifikasi Instalasi
 
-- **Intel Arc / XPU** — `environment.yml` sudah memakai `torch==2.10.0+xpu`.
-  Pastikan driver Intel Arc terbaru sudah ter-install.
-- **NVIDIA / CUDA** — Ganti baris `torch==2.10.0+xpu` (di `environment.yml`)
-  atau `torch==2.10.0` (di `requirements.txt`) dengan versi PyTorch CUDA yang
-  sesuai, lalu install ulang. Pipeline lain tidak terpengaruh.
-- **CPU only** — Bisa dijalankan, tapi `Ablasi 1 (RQ2)`, `Kriteria Multimodal`,
-  dan `Baseline CLIP` akan lambat (training berbasis Transformer).
+```python
+import torch
+print(torch.__version__)          # harus: 2.10.0+xpu
+print(torch.xpu.is_available())   # harus: True (untuk Intel Arc)
+```
+
+Notebook secara otomatis memilih device dengan urutan: `cuda` → `xpu` → `mps`
+→ `cpu`. Tidak perlu mengubah kode jika memakai backend yang berbeda.
 
 ### API Key Gemma-3
 
@@ -112,8 +124,10 @@ Jika ingin menjalankan ulang, isi `API_KEY` di sel pertama notebook tersebut.
 
 ## Dependensi Utama
 
-Dependensi terkunci pada versi spesifik untuk menjamin reproducibility.
-Daftar lengkap ada di `environment.yml` dan `requirements.txt`.
+Daftar lengkap dengan versi terkunci ada di `environment.yml` dan
+`requirements.txt`. Hanya library yang benar-benar di-import oleh notebook
+yang dicantumkan; library lain di lingkungan pengembangan penulis (mis.
+`accelerate`, `spacy`, `peft`, `easyocr`) tidak relevan untuk repo ini.
 
 | Library                | Versi          | Fungsi                                                          |
 |------------------------|----------------|-----------------------------------------------------------------|
@@ -127,4 +141,5 @@ Daftar lengkap ada di `environment.yml` dan `requirements.txt`.
 | `numpy`                | 2.2.6          | Komputasi numerik                                               |
 | `pillow`               | 12.0.0         | Pembacaan gambar (`.jpg`)                                       |
 | `tqdm`                 | 4.67.1         | Progress bar                                                    |
-| `matplotlib`           | 3.10.8         | Visualisasi QWK                                                 |
+| `tabulate`             | 0.10.0         | Render tabel hasil grid search (`pandas.to_markdown`)           |
+| `ipykernel`            | 7.2.0          | Kernel Jupyter untuk eksekusi notebook                          |

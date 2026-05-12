@@ -3,20 +3,27 @@
 #  Gemma-3 dan RoBERTa" (Gultom, 2026).
 #
 # Lingkungan referensi:
-#   - OS       : Windows 11 Home Single Language 25H2 (x86_64)
+#   - OS       : Windows 11 Home Single Language 25H2
 #   - Conda    : 25.9.1
 #   - Python   : 3.10.19
 #   - GPU      : Intel Arc Graphics (Core Ultra 7 155H) via PyTorch XPU backend
+#
+# File ini HANYA mencantumkan dependency yang di-import oleh notebook pada
+# repo. Pemilihan minimal ini agar setup lebih cepat & tidak menarik library
+# eksperimen lain yang ada di lingkungan pengembangan penulis.
 #
 # Cara pakai:
 #   conda env create -f environment.yml
 #   conda activate skripsi-aes
 #
-# Catatan:
-#   - PyTorch 2.10.0+xpu di-install via pip karena wheel resmi belum tersedia
-#     di channel conda Intel pada saat penelitian dilakukan.
-#   - Pengguna non-Intel (NVIDIA / CPU only) dapat mengganti torch==2.10.0+xpu
-#     dengan torch==2.10.0 biasa; sisa pipeline tidak terpengaruh.
+# Catatan PyTorch XPU:
+#   - torch 2.10.0+xpu di-install via pip karena wheel +xpu hanya disediakan
+#     di index khusus PyTorch (bukan di channel conda).
+#   - Runtime Intel oneAPI (dpcpp-cpp-rt, intel-cmplr-*, intel-opencl-rt,
+#     intel-sycl-rt, onemkl-sycl-*, intel-openmp, mkl, tbb, triton-xpu, umf)
+#     akan ter-install otomatis sebagai dependensi torch==2.10.0+xpu.
+#   - Pengguna NVIDIA atau CPU dapat mengganti baris torch di pip section
+#     mengikuti petunjuk di requirements.txt.
 
 name: skripsi-aes
 
@@ -27,13 +34,20 @@ channels:
 dependencies:
   - python=3.10.19
   - pip
+  - ipykernel=7.2.0
   - pip:
-      # Deep learning & transformer
+      # PyTorch dengan XPU backend (lihat catatan di header)
+      - --extra-index-url https://download.pytorch.org/whl/xpu
       - torch==2.10.0
+
+      # Deep learning & transformer
       - transformers==5.0.1.dev0
 
       # Multimodal LLM API
       - google-generativeai==0.8.6
+
+      # Evaluasi keselarasan semantik
+      - bert-score==0.3.13
 
       # Data & komputasi numerik
       - pandas==2.3.3
@@ -41,14 +55,7 @@ dependencies:
       - scikit-learn==1.7.2
       - scipy==1.15.3
 
-      # Evaluasi keselarasan semantik
-      - bert-score==0.3.13
-
-      # I/O gambar & utilitas
+      # I/O gambar & utilitas notebook
       - pillow==12.0.0
       - tqdm==4.67.1
-      - matplotlib==3.10.8
       - tabulate==0.10.0
-
-      # Notebook runtime
-      - ipykernel==7.2.0
