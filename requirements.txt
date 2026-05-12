@@ -1,0 +1,37 @@
+# Requirements untuk skripsi "Strategi Dekomposisi Pipeline Berbasis Konversi
+# Modalitas Menggunakan Gemma-3 dan RoBERTa" (Gultom, 2026).
+#
+# File ini berisi semua dependency pip yang dipakai oleh notebook di repositori.
+# Gunakan ini sebagai alternatif jika tidak memakai Conda. Lihat environment.yml
+# untuk replikasi penuh termasuk Python 3.10.19 + PyTorch XPU backend.
+#
+# Catatan PyTorch:
+#   - Versi 2.10.0+xpu (Intel Arc) di-pin di environment.yml karena memerlukan
+#     channel khusus Intel/PyTorch.
+#   - Pengguna NVIDIA cukup `pip install torch==2.10.0` (CPU/CUDA default).
+#   - Pengguna XPU disarankan memakai environment.yml.
+
+# Deep learning & transformer
+torch==2.10.0
+transformers==5.0.1.dev0
+
+# Multimodal LLM API
+google-generativeai==0.8.6
+
+# Data & komputasi numerik
+pandas==2.3.3
+numpy==2.2.6
+scikit-learn==1.7.2
+scipy==1.15.3
+
+# Evaluasi keselarasan semantik
+bert-score==0.3.13
+
+# I/O gambar & utilitas
+pillow==12.0.0
+tqdm==4.67.1
+matplotlib==3.10.8
+tabulate==0.10.0
+
+# Notebook runtime
+ipykernel==7.2.0
