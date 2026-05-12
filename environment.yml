@@ -8,9 +8,9 @@
 #   - Python   : 3.10.19
 #   - GPU      : Intel Arc Graphics (Core Ultra 7 155H) via PyTorch XPU backend
 #
-# File ini HANYA mencantumkan dependency yang di-import oleh notebook pada
-# repo. Pemilihan minimal ini agar setup lebih cepat & tidak menarik library
-# eksperimen lain yang ada di lingkungan pengembangan penulis.
+# File ini HANYA mencantumkan dependency yang di-import oleh notebook & script
+# pada repo. Pemilihan minimal ini agar setup lebih cepat & tidak menarik
+# library eksperimen lain yang ada di lingkungan pengembangan penulis.
 #
 # Cara pakai:
 #   conda env create -f environment.yml
@@ -54,6 +54,9 @@ dependencies:
       - numpy==2.2.6
       - scikit-learn==1.7.2
       - scipy==1.15.3
+
+      # Persiapan dataset (unduh gambar via scripts/download_images.py)
+      - requests==2.32.5
 
       # I/O gambar & utilitas notebook
       - pillow==12.0.0
