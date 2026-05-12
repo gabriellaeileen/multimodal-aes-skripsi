@@ -1,5 +1,5 @@
 # Requirements untuk skripsi "Strategi Dekomposisi Pipeline Berbasis Konversi
-# Modalitas Menggunakan Gemma-3 dan RoBERTa" (Gultom, 2026).
+# Modalitas Menggunakan Gemma-3 dan RoBERTa".
 #
 # Hanya berisi dependensi yang BENAR-BENAR di-import oleh notebook pada repo.
 # Untuk replikasi lingkungan penelitian (Python 3.10.19 + Conda 25.9.1 + Intel

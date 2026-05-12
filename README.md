@@ -3,7 +3,7 @@
 Repositori source code dan dataset untuk skripsi
 "Strategi Dekomposisi Pipeline Berbasis Konversi Modalitas
 Menggunakan Gemma-3 dan RoBERTa untuk Mengatasi Kesenjangan
-Semantik pada Penilaian Esai Multimodal Otomatis" (Gultom, 2026).
+Semantik pada Penilaian Esai Multimodal Otomatis".
 
 ## Struktur
 
@@ -18,12 +18,18 @@ Semantik pada Penilaian Esai Multimodal Otomatis" (Gultom, 2026).
 | `Ablasi 4 (RQ5)/`           | Dampak BERTScore sebagai jembatan semantik.    |
 | `Ablasi Pooling/`           | Pemilihan strategi pooling pendahuluan.        |
 | `Uji Signifikansi (t-test)/`| Paired Sample T-Test pembanding CLIP vs usulan.|
+| `scripts/`                  | Script persiapan dataset (unduh gambar).       |
 
 ## Data
 
 - `data.csv` — Dataset EssayJudge lengkap (1.054 entri).
 - `train_df.csv` (867 baris) dan `test_df.csv` (187 baris) — Hasil Group Shuffle Split 80:20.
 - `short_gemma_bertscore.csv` — Cache deskripsi visual Gemma-3 (45 kata) + BERTScore F1.
+
+> **Catatan gambar referensi**: Berkas gambar mentah EssayJudge **tidak
+> disertakan** dalam repositori ini karena pertimbangan ukuran dan lisensi
+> redistribusi. Lihat bagian [Persiapan Gambar](#persiapan-gambar) untuk
+> instruksi pengunduhan.
 
 ## Lingkungan Eksperimen
 
@@ -113,14 +119,36 @@ Karena hasil ekstraksi sudah di-*cache* di `short_gemma_bertscore.csv`,
 notebook ini **tidak perlu dijalankan ulang** untuk reproduksi hasil utama.
 Jika ingin menjalankan ulang, isi `API_KEY` di sel pertama notebook tersebut.
 
+## Persiapan Gambar
+
+Berkas gambar referensi EssayJudge **tidak disertakan** dalam repositori
+karena alasan ukuran dan lisensi redistribusi. Hanya `Baseline CLIP/` yang
+membutuhkan gambar mentah pada saat eksekusi; seluruh notebook lain
+mengandalkan cache fitur visual di `short_gemma_bertscore.csv`.
+
+### Unduh otomatis dari sumber resmi
+
+```bash
+python scripts/download_images.py
+```
+
+Hasil unduhan disimpan di direktori `images/` pada akar repositori. Script
+ini idempoten: gambar yang sudah ada di lokal akan dilewati. Notebook
+`Baseline CLIP/` mencari gambar pada direktori `images/` secara default.
+
 ## Urutan Eksekusi
 
 1. (Sudah disediakan) Hasil split data di `train_df.csv` / `test_df.csv`.
 2. (Sudah disediakan) Cache Gemma-3 + BERTScore di `short_gemma_bertscore.csv`.
-3. Jalankan `Baseline CLIP/` untuk reproduksi baseline.
-4. Jalankan `Kriteria Tekstual/` dan `Kriteria Multimodal/` untuk metode usulan.
-5. Jalankan folder `Ablasi 1` sampai `Ablasi 4` dan `Ablasi Pooling`.
-6. Jalankan `Uji Signifikansi (t-test)/` untuk validasi statistik.
+3. (Opsional, hanya untuk Baseline CLIP) Unduh gambar:
+   `python scripts/download_images.py`
+4. Jalankan `Baseline CLIP/` untuk reproduksi baseline.
+5. Jalankan `Kriteria Tekstual/` dan `Kriteria Multimodal/` untuk metode usulan.
+6. Jalankan folder `Ablasi 1` sampai `Ablasi 4` dan `Ablasi Pooling`.
+7. Jalankan `Uji Signifikansi (t-test)/` untuk validasi statistik.
+
+> Notebook urutan 5–7 dapat dijalankan **tanpa** menyelesaikan langkah 3
+> karena tidak memerlukan gambar mentah.
 
 ## Dependensi Utama
 
